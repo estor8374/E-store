@@ -1,389 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Cart - Deepshak Mart</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Cart - eCart</title>
   <style>
-    :root {
-      --primary: #4a6bff;
-      --secondary: #f8f9fa;
-      --danger: #dc3545;
-      --success: #28a745;
-      --light: #ffffff;
-      --dark: #343a40;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
     body {
-      background-color: #f5f5f5;
-      color: #333;
-      line-height: 1.6;
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      padding: 20px;
     }
-    
-    header {
-      background-color: var(--primary);
-      color: white;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    
-    .header-content {
-      width: 100%;
-      max-width: 1200px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    
-    nav {
-      display: flex;
-      gap: 1rem;
-      margin-top: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      transition: opacity 0.3s;
-      padding: 0.3rem 0.6rem;
-      font-size: 0.9rem;
-    }
-    
-    nav a:hover {
-      opacity: 0.8;
-    }
-    
-    main {
-      max-width: 1200px;
-      margin: 1rem auto;
-      padding: 0 1rem;
-    }
-    
     h2 {
-      margin-bottom: 1rem;
-      color: var(--dark);
-      font-size: 1.3rem;
-    }
-    
-    .table-container {
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-      background-color: var(--light);
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 600px;
-    }
-    
-    th {
-      background-color: var(--primary);
-      color: white;
-      padding: 0.8rem;
-      text-align: left;
-      font-size: 0.9rem;
-    }
-    
-    td {
-      padding: 0.8rem;
-      border-bottom: 1px solid #eee;
-      font-size: 0.9rem;
-    }
-    
-    tr:hover {
-      background-color: var(--secondary);
-    }
-    
-    input[type="number"] {
-      width: 60px;
-      padding: 0.4rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-    
-    .btn {
-      border: none;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    
-    .remove-btn {
-      background-color: var(--danger);
-      color: white;
-    }
-    
-    .remove-btn:hover {
-      background-color: #c82333;
-    }
-    
-    .add-btn {
-      background-color: var(--success);
-      color: white;
-      margin-top: 1rem;
-    }
-    
-    .add-btn:hover {
-      background-color: #218838;
-    }
-    
-    .checkout-btn {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 1rem;
-      width: 100%;
       text-align: center;
-      font-size: 1rem;
     }
-    
-    .checkout-btn:hover {
-      background-color: #3a56e0;
+    .cart-item {
+      display: flex;
+      background: #fff;
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      align-items: center;
+      justify-content: space-between;
     }
-    
-    .cart-actions {
+    .cart-item img {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .info {
+      flex: 1;
+      padding: 0 15px;
+    }
+    .info h3 {
+      margin: 0 0 10px;
+    }
+    .info p {
+      margin: 5px 0;
+    }
+    .actions {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 10px;
+      align-items: flex-end;
     }
-    
-    .total {
-      font-size: 1.1rem;
-      font-weight: bold;
-      margin: 1rem 0;
-      text-align: right;
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
     }
-    
-    .empty-cart {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-    }
-    
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background-color: var(--dark);
+    .buy-btn {
+      background-color: #28a745;
       color: white;
-      margin-top: 2rem;
-      font-size: 0.9rem;
     }
-    
-    /* Mobile-specific styles */
-    @media (max-width: 600px) {
-      .header-content {
-        flex-direction: column;
-        text-align: center;
-      }
-      
-      nav {
-        margin-top: 0.8rem;
-      }
-      
-      table {
-        min-width: 100%;
-      }
-      
-      th, td {
-        padding: 0.6rem;
-      }
-      
-      .checkout-btn {
-        padding: 0.7rem;
-        font-size: 0.9rem;
-      }
-      
-      .total {
-        font-size: 1rem;
-      }
+    .remove-btn {
+      background-color: #dc3545;
+      color: white;
     }
-    
-    @media (max-width: 400px) {
-      nav {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      
-      nav a {
-        padding: 0.2rem;
-      }
+    .checkout {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .checkout-btn {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="header-content">
-      <h1>🛍️ My Shopping Cart</h1>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="orders.html">My Orders</a>
-        <a href="checkout.html">Checkout</a>
-      </nav>
-    </div>
-  </header>
+  <h2>Your Cart</h2>
+  <div id="cartContainer"></div>
 
-  <main>
-    <h2>📋 Your Selected Products</h2>
-
-    <div class="table-container">
-      <table id="cart-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Total</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="cart-items">
-          <!-- Cart items will be added here dynamically -->
-        </tbody>
-      </table>
-    </div>
-
-    <div id="empty-cart-message" class="empty-cart" style="display: none;">
-      <p>Your cart is empty. Add some products!</p>
-    </div>
-
-    <div class="cart-actions">
-      <button class="add-btn" id="add-product-btn">➕ Add Sample Product</button>
-      <div class="total" id="grand-total">Grand Total: ₹0</div>
-      <a href="checkout.html" class="checkout-btn" id="checkout-btn" style="display: none;">Proceed to Checkout</a>
-    </div>
-  </main>
-
-  <footer>
-    <p>© 2025 Deepshak Mart. All rights reserved.</p>
-  </footer>
+  <div class="checkout">
+    <button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout</button>
+  </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const cartItems = document.getElementById('cart-items');
-      const emptyCartMessage = document.getElementById('empty-cart-message');
-      const grandTotalElement = document.getElementById('grand-total');
-      const checkoutBtn = document.getElementById('checkout-btn');
-      const addProductBtn = document.getElementById('add-product-btn');
-      
-      let products = [];
-      let productIdCounter = 1;
-      
-      // Sample product data
-      const sampleProducts = [
-        { name: "Bluetooth Headphones", price: 200 },
-        { name: "USB Charger", price: 150 },
-        { name: "Power Bank", price: 500 },
-        { name: "Wireless Mouse", price: 250 },
-        { name: "Smart Watch", price: 1200 }
-      ];
-      
-      // Add product to cart
-      function addProduct(product) {
-        const newProduct = {
-          id: productIdCounter++,
-          name: product.name,
-          price: product.price,
-          quantity: 1
-        };
-        products.push(newProduct);
-        renderCart();
+    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    let selectedIndexes = new Set();
+
+    function renderCart() {
+      const cartContainer = document.getElementById("cartContainer");
+      cartContainer.innerHTML = '';
+
+      if (cartItems.length === 0) {
+        cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+        return;
       }
-      
-      // Remove product from cart
-      function removeProduct(productId) {
-        products = products.filter(product => product.id !== productId);
-        renderCart();
-      }
-      
-      // Update product quantity
-      function updateQuantity(productId, newQuantity) {
-        const product = products.find(p => p.id === productId);
-        if (product) {
-          product.quantity = parseInt(newQuantity) || 1;
-          renderCart();
-        }
-      }
-      
-      // Calculate grand total
-      function calculateTotal() {
-        return products.reduce((total, product) => {
-          return total + (product.price * product.quantity);
-        }, 0);
-      }
-      
-      // Render cart
-      function renderCart() {
-        cartItems.innerHTML = '';
-        
-        if (products.length === 0) {
-          emptyCartMessage.style.display = 'block';
-          checkoutBtn.style.display = 'none';
-        } else {
-          emptyCartMessage.style.display = 'none';
-          checkoutBtn.style.display = 'block';
-          
-          products.forEach(product => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${product.name}</td>
-              <td>₹${product.price}</td>
-              <td><input type="number" value="${product.quantity}" min="1" 
-                   onchange="updateQuantity(${product.id}, this.value)"></td>
-              <td>₹${product.price * product.quantity}</td>
-              <td><button class="btn remove-btn" onclick="removeProduct(${product.id})">❌ Remove</button></td>
-            `;
-            cartItems.appendChild(row);
-          });
-        }
-        
-        const grandTotal = calculateTotal();
-        grandTotalElement.textContent = `Grand Total: ₹${grandTotal}`;
-      }
-      
-      // Add sample product button
-      addProductBtn.addEventListener('click', function() {
-        const randomProduct = sampleProducts[Math.floor(Math.random() * sampleProducts.length)];
-        addProduct(randomProduct);
+
+      cartItems.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = "cart-item";
+        itemDiv.innerHTML = `
+          <input type="checkbox" onchange="toggleSelection(${index})" ${selectedIndexes.has(index) ? 'checked' : ''} />
+          <img src="${item.image}" alt="${item.name}" />
+          <div class="info">
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <p><strong>Price:</strong> ₹${item.price}</p>
+          </div>
+          <div class="actions">
+            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+          </div>
+        `;
+        cartContainer.appendChild(itemDiv);
       });
-      
-      // Expose functions to global scope for inline event handlers
-      window.removeProduct = removeProduct;
-      window.updateQuantity = updateQuantity;
-      
-      // Initial render
+    }
+
+    function toggleSelection(index) {
+      if (selectedIndexes.has(index)) {
+        selectedIndexes.delete(index);
+      } else {
+        selectedIndexes.add(index);
+      }
+    }
+
+    function removeItem(index) {
+      cartItems.splice(index, 1);
+      selectedIndexes.delete(index);
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
       renderCart();
-    });
+    }
+
+    function proceedToCheckout() {
+      if (selectedIndexes.size === 0) {
+        alert("Please select at least one item to checkout.");
+        return;
+      }
+      const selectedItems = Array.from(selectedIndexes).map(i => cartItems[i]);
+      localStorage.setItem("checkoutItems", JSON.stringify(selectedItems));
+      window.location.href = 'checkout.html';
+    }
+
+    renderCart();
   </script>
 
 </body>
