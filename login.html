@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login - eCart</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f9fafb; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+  .login-container { background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); width:320px; }
+  h2 { text-align:center; margin-bottom:20px; }
+  input[type="email"], input[type="password"] { width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; }
+  button { width:100%; padding:10px; background:#007bff; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+  button:hover { background:#0056b3; }
+  .msg { color:red; margin-bottom:10px; text-align:center; }
+  .signup-link { text-align:center; margin-top:15px; }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Login</h2>
+  <div id="msg" class="msg"></div>
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button onclick="login()">Login</button>
+  <div class="signup-link">
+    Don't have an account? <a href="signup.html">Sign up</a>
+  </div>
+</div>
+
+<script>
+function login() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const msg = document.getElementById('msg');
+  if(!email || !password){
+    msg.textContent = "Please fill all fields.";
+    return;
+  }
+  // Simple localStorage user check
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+  const user = users.find(u => u.email === email && u.password === password);
+  if(user){
+    localStorage.setItem('loggedInUser', JSON.stringify(user));
+    alert('Login successful!');
+    window.location.href = 'index.html';
+  } else {
+    msg.textContent = "Invalid email or password.";
+  }
+}
+</script>
+
+</body>
+</html>
