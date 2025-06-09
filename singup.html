@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Signup - eCart</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f9fafb; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+  .signup-container { background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); width:320px; }
+  h2 { text-align:center; margin-bottom:20px; }
+  input[type="text"], input[type="email"], input[type="password"] { width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; }
+  button { width:100%; padding:10px; background:#28a745; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+  button:hover { background:#218838; }
+  .msg { color:red; margin-bottom:10px; text-align:center; }
+  .login-link { text-align:center; margin-top:15px; }
+</style>
+</head>
+<body>
+
+<div class="signup-container">
+  <h2>Sign Up</h2>
+  <div id="msg" class="msg"></div>
+  <input type="text" id="name" placeholder="Full Name" required />
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button onclick="signup()">Sign Up</button>
+  <div class="login-link">
+    Already have an account? <a href="login.html">Login</a>
+  </div>
+</div>
+
+<script>
+function signup() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const msg = document.getElementById('msg');
+  if(!name || !email || !password){
+    msg.textContent = "Please fill all fields.";
+    return;
+  }
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  if(users.some(u => u.email === email)){
+    msg.textContent = "Email already registered.";
+    return;
+  }
+  users.push({name, email, password});
+  localStorage.setItem('users', JSON.stringify(users));
+  alert('Registration successful! Please login.');
+  window.location.href = 'login.html';
+}
+</script>
+
+</body>
+</html>
