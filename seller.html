@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seller Dashboard - eCart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .success {
+      text-align: center;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Add New Product</h2>
+    <div class="success" id="message"></div>
+    <input type="text" id="productName" placeholder="Product Name" required />
+    <input type="number" id="productPrice" placeholder="Price (INR)" required />
+    <textarea id="productDescription" placeholder="Product Description" required></textarea>
+    <input type="text" id="productImage" placeholder="Image URL" required />
+    <button onclick="addProduct()">Add Product</button>
+  </div>
+
+  <script>
+    function addProduct() {
+      const name = document.getElementById('productName').value.trim();
+      const price = document.getElementById('productPrice').value.trim();
+      const description = document.getElementById('productDescription').value.trim();
+      const image = document.getElementById('productImage').value.trim();
+      const message = document.getElementById('message');
+
+      if (!name || !price || !description || !image) {
+        message.textContent = "Please fill all fields.";
+        return;
+      }
+
+      const newProduct = {
+        id: Date.now(),
+        name,
+        price,
+        description,
+        image
+      };
+
+      let products = JSON.parse(localStorage.getItem('products')) || [];
+      products.push(newProduct);
+      localStorage.setItem('products', JSON.stringify(products));
+
+      message.textContent = "Product added successfully!";
+      document.getElementById('productName').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productDescription').value = '';
+      document.getElementById('productImage').value = '';
+    }
+  </script>
+
+</body>
+</html>
