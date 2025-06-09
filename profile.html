@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Profile - eCart</title>
+<style>
+  body { font-family: Arial, sans-serif; padding:20px; background:#f9fafb; }
+  .container { max-width:600px; margin:auto; background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+  h2 { text-align:center; margin-bottom:20px; }
+  p { font-size:18px; }
+  .logout-btn { background:#dc3545; color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; display:block; margin: 20px auto 0 auto; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Your Profile</h2>
+  <div id="profileInfo"></div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<script>
+function loadProfile(){
+  const user = JSON.parse(localStorage.getItem('loggedInUser'));
+  const profileDiv = document.getElementById('profileInfo');
+  if(!user){
+    profileDiv.innerHTML = '<p>Please login first.</p>';
+    return;
+  }
+  profileDiv.innerHTML = `
+    <p><strong>Name:</strong> ${user.name}</p>
+    <p><strong>Email:</strong> ${user.email}</p>
+  `;
+}
+
+function logout(){
+  localStorage.removeItem('loggedInUser');
+  alert('Logged out successfully.');
+  window.location.href = 'login.html';
+}
+
+window.onload = loadProfile;
+</script>
+</body>
+</html>
