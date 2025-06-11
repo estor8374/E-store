@@ -1,104 +1,107 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-store</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            text-align: center;
-            font-size: 2em;
-            font-weight: bold;
-            padding: 10px;
-            font-family: 'Georgia', serif;
-        }
-        .ad-section {
-            background-color: yellow;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .search-bar {
-            padding: 10px;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 10px;
-            font-size: 1em;
-            box-sizing: border-box;
-        }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            padding: 10px;
-        }
-        .product {
-            border: 2px solid black;
-            text-align: center;
-            padding: 10px;
-        }
-        .product img {
-            width: 100%;
-            height: 150px;
-            object-fit: contain;
-        }
-        .nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            background: #e6f0ff;
-            padding: 10px 0;
-        }
-        .nav div {
-            font-size: 1.5em;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>E-store</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      font-style: italic;
+      margin-top: 20px;
+    }
+    #ad-section {
+      background-color: #ffe;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #search {
+      display: block;
+      margin: 10px auto;
+      width: 90%;
+      height: 40px;
+      font-size: 18px;
+      padding: 5px;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 10px;
+    }
+    .product {
+      border: 2px solid black;
+      text-align: center;
+      padding: 10px;
+    }
+    .product img {
+      width: 100%;
+      height: auto;
+    }
+    .price {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background-color: #e0f0ff;
+      padding: 10px 0;
+      border-top: 2px solid #ccc;
+    }
+    .bottom-nav button {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div class="header">E-store</div><div class="ad-section" id="adSection">
-    <!-- Ad content will be inserted here -->
-</div>
 
-<div class="search-bar">
-    <input type="text" placeholder="search here">
-</div>
+  <h1>E-store</h1>
 
-<div class="product-grid" id="productGrid">
-    <!-- Product cards will be inserted here -->
-</div>
+  <div id="ad-section">
+    🔥 Special Offer: Flat 20% OFF on Electronics! 🔥
+  </div>
 
-<div class="nav">
-    <div>🙋</div>
-    <div>🏡</div>
-    <div>🛒</div>
-</div>
+  <input type="text" id="search" placeholder="search here">
 
-<script>
-    // Load Ad from localStorage
-    const adContent = localStorage.getItem('ad') || 'Welcome to E-store! Hot deals are live now!';
-    document.getElementById('adSection').innerText = adContent;
+  <div class="product-grid" id="productGrid">
+    <!-- Products will be shown here -->
+  </div>
 
-    // Load Products from localStorage
-    const products = JSON.parse(localStorage.getItem('products')) || [];
-    const grid = document.getElementById('productGrid');
+  <div class="bottom-nav">
+    <button onclick="location.href='profile.html'">👦</button>
+    <button onclick="location.href='index.html'">🏠</button>
+    <button onclick="location.href='cart.html'">🛒</button>
+  </div>
 
-    products.forEach(product => {
-        const div = document.createElement('div');
-        div.className = 'product';
-        div.innerHTML = `
-            <img src="${product.image}" alt="Product image">
-            <p>${product.price}</p>
-        `;
-        grid.appendChild(div);
+  <script>
+    // Sample data from localStorage
+    const products = JSON.parse(localStorage.getItem("products")) || [];
+
+    const grid = document.getElementById("productGrid");
+
+    products.forEach(prod => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <img src="${prod.image}" alt="product image">
+        <div class="price">৳${prod.price}</div>
+      `;
+      grid.appendChild(div);
     });
-</script>
+  </script>
 
 </body>
 </html>
