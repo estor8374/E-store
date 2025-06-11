@@ -1,55 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Signup - eCart</title>
-<style>
-  body { font-family: Arial, sans-serif; background:#f9fafb; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
-  .signup-container { background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); width:320px; }
-  h2 { text-align:center; margin-bottom:20px; }
-  input[type="text"], input[type="email"], input[type="password"] { width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; }
-  button { width:100%; padding:10px; background:#28a745; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
-  button:hover { background:#218838; }
-  .msg { color:red; margin-bottom:10px; text-align:center; }
-  .login-link { text-align:center; margin-top:15px; }
-</style>
+  <meta charset="UTF-8">
+  <title>Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      outline: none;
+      transition: border 0.3s;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      border-color: #ff7a7a;
+      box-shadow: 0 0 0 2px rgba(255, 122, 122, 0.2);
+    }
+
+    button {
+      background-color: #ff7a7a;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff5e5e;
+    }
+
+    .footer-text {
+      margin-top: 30px;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .footer-text a {
+      color: #ff7a7a;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
-<div class="signup-container">
-  <h2>Sign Up</h2>
-  <div id="msg" class="msg"></div>
-  <input type="text" id="name" placeholder="Full Name" required />
-  <input type="email" id="email" placeholder="Email" required />
-  <input type="password" id="password" placeholder="Password" required />
-  <button onclick="signup()">Sign Up</button>
-  <div class="login-link">
-    Already have an account? <a href="login.html">Login</a>
-  </div>
-</div>
+  <div class="container">
+    <h2>Create Your Account</h2>
+    <p class="subtitle">Join us today and enjoy affordable prices on all our products</p>
 
-<script>
-function signup() {
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const msg = document.getElementById('msg');
-  if(!name || !email || !password){
-    msg.textContent = "Please fill all fields.";
-    return;
-  }
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  if(users.some(u => u.email === email)){
-    msg.textContent = "Email already registered.";
-    return;
-  }
-  users.push({name, email, password});
-  localStorage.setItem('users', JSON.stringify(users));
-  alert('Registration successful! Please login.');
-  window.location.href = 'login.html';
-}
-</script>
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required />
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a password" required minlength="8" />
+      </div>
+
+      <button type="submit">Create Account</button>
+    </form>
+
+    <div class="footer-text">
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+      <p>Are you a seller? <a href="seller.html">Create seller account</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Add form submission logic here
+      console.log('Form submitted');
+      // You would typically add AJAX call or form action here
+    });
+  </script>
 
 </body>
 </html>
