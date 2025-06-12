@@ -82,11 +82,11 @@
 
 <script>
   // 1. Show ad
-  const adText = localStorage.getItem("ads") || 
+  const adText = localStorage.getItem("adminAd") || "🔥 Big Sale Today! Get up to 50% off!";
   document.getElementById("adBanner").innerText = adText;
 
   // 2. Load products from seller
-  const sellerProducts = JSON.parse(localStorage.getItem("Products")) || [];
+  const sellerProducts = JSON.parse(localStorage.getItem("sellerProducts")) || [];
 
   const container = document.getElementById("productContainer");
 
