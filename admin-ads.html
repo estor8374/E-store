@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Ads - Admin Panel</title>
+  <style>
+    body { font-family: Arial; margin: 0; padding: 0; background: #f4f4f4; }
+    header { background-color: #333; color: white; padding: 10px 20px; text-align: center; }
+    h1 { margin: 0; }
+
+    .container { padding: 20px; }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #218838;
+    }
+
+    .ad-list {
+      background: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .ad-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .ad-item:last-child {
+      border-bottom: none;
+    }
+
+    .delete-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .back-btn {
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+      background: #555;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Manage Ads</h1>
+</header>
+
+<div class="container">
+  <form id="adForm">
+    <label for="adText">Ad Text (short):</label>
+    <input type="text" id="adText" required placeholder="Enter ad message here...">
+    
+    <input type="submit" value="Add Ad">
+  </form>
+
+  <div class="ad-list" id="adList">
+    <!-- Ad items will appear here -->
+  </div>
+
+  <a href="admin-index.html" class="back-btn">⬅️ Back to Dashboard</a>
+</div>
+
+<script>
+  const adForm = document.getElementById('adForm');
+  const adText = document.getElementById('adText');
+  const adList = document.getElementById('adList');
+
+  // Load ads from localStorage
+  function loadAds() {
+    const ads = JSON.parse(localStorage.getItem('ads')) || [];
+    adList.innerHTML = '';
+    ads.forEach((ad, index) => {
+      const div = document.createElement('div');
+      div.className = 'ad-item';
+      div.innerHTML = `
+        <span>${ad}</span>
+        <button class="delete-btn" onclick="deleteAd(${index})">Delete</button>
+      `;
+      adList.appendChild(div);
+    });
+  }
+
+  // Add new ad
+  adForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const ad = adText.value.trim();
+    if (ad) {
+      const ads = JSON.parse(localStorage.getItem('ads')) || [];
+      ads.push(ad);
+      localStorage.setItem('ads', JSON.stringify(ads));
+      adText.value = '';
+      loadAds();
+    }
+  });
+
+  // Delete ad
+  function deleteAd(index) {
+    const ads = JSON.parse(localStorage.getItem('ads')) || [];
+    ads.splice(index, 1);
+    localStorage.setItem('ads', JSON.stringify(ads));
+    loadAds();
+  }
+
+  // Initial load
+  loadAds();
+</script>
+
+</body>
+</html>
