@@ -1,60 +1,52 @@
-<!-- seller.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Seller Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
-    .form-box { background: white; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; }
-    h2 { text-align: center; }
-    input, textarea, button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+    body { font-family: Arial, sans-serif; margin: 0; padding-bottom: 60px; background: #f2f2f2; }
+    header { background: #007bff; color: white; padding: 15px; text-align: center; font-size: 20px; }
+    .product {
+      background: white; margin: 10px; padding: 10px; border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-    button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+    footer {
+      position: fixed; bottom: 0; width: 100%; background: #ddd;
+      display: flex; justify-content: space-around; padding: 10px 0;
+    }
+    footer button { background: none; border: none; font-size: 16px; }
   </style>
 </head>
 <body>
-  <div class="form-box">
-    <h2>Add New Product</h2>
-    <input type="text" id="productName" placeholder="Product Name">
-    <input type="number" id="productPrice" placeholder="Price in ₹">
-    <textarea id="productDesc" placeholder="Description"></textarea>
-    <button onclick="addProduct()">Add Product</button>
-  </div>
+
+  <header>Your Products</header>
+  <div id="productList"></div>
+
+  <footer>
+    <button onclick="location.href='sel-index.html'">🏠 Home</button>
+    <button onclick="location.href='sel-product.html'">➕ Add</button>
+    <button onclick="location.href='sel-profile.html'">👤 Profile</button>
+    <button onclick="location.href='sel-oders.html'">📦oders</button>
+    <button onclick="location.href='sel-asks.html'">❓asks</button>
+  </footer>
 
   <script>
-    function addProduct() {
-      const name = document.getElementById("productName").value;
-      const price = parseFloat(document.getElementById("productPrice").value);
-      const description = document.getElementById("productDesc").value;
+    const sellerId = prompt("Enter your Seller ID:");
+    const key = `products_${sellerId}`;
+    const products = JSON.parse(localStorage.getItem(key)) || [];
 
-      if (!name || !price || !description) {
-        alert("Please fill all fields");
-        return;
-      }
-
-      const newProduct = {
-        name,
-        price,
-        description,
-        orders: 0
-      };
-
-      const allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
-      allProducts.push(newProduct);
-      localStorage.setItem("allProducts", JSON.stringify(allProducts));
-
-      alert("Product added successfully!");
-      document.getElementById("productName").value = "";
-      document.getElementById("productPrice").value = "";
-      document.getElementById("productDesc").value = "";
+    const container = document.getElementById("productList");
+    if (products.length === 0) {
+      container.innerHTML = "<p style='text-align:center'>No products found.</p>";
+    } else {
+      products.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `<h3>${product.name}</h3><p>₹${product.price}</p><p>${product.description}</p>`;
+        container.appendChild(div);
+      });
     }
   </script>
+
 </body>
 </html>
