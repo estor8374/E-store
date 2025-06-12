@@ -26,6 +26,18 @@
       color: #856404;
       border-bottom: 2px solid #ffecb5;
     }
+    .search-bar {
+      margin: 20px auto 0;
+      text-align: center;
+    }
+    .search-bar input {
+      padding: 10px;
+      width: 60%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
     .container {
       padding: 20px;
       display: grid;
@@ -74,6 +86,10 @@
 
 <div class="ad-banner" id="adBanner">Loading ad...</div>
 
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search product by name..." oninput="filterProducts()">
+</div>
+
 <div class="container" id="productContainer">
   <!-- Products will be loaded here -->
 </div>
@@ -81,35 +97,49 @@
 <footer>© 2025 eStore. All rights reserved.</footer>
 
 <script>
-  // 1. Show ad
-  const adText = localStorage.getItem("adminAd") || "🔥 Big Sale Today! Get up to 50% off!";
+  const adText = localStorage.getItem("ads") ||;
   document.getElementById("adBanner").innerText = adText;
 
-  // 2. Load products from seller
-  const sellerProducts = JSON.parse(localStorage.getItem("sellerProducts")) || [];
+  const sellerProducts = JSON.parse(localStorage.getItem("allproducts")) || [];
+
+  let allProducts = sellerProducts;
 
   const container = document.getElementById("productContainer");
 
-  if (sellerProducts.length === 0) {
-    container.innerHTML = "<p>No products found.</p>";
-  } else {
-    sellerProducts.forEach((item, index) => {
-      const div = document.createElement("div");
-      div.className = "product";
-      div.onclick = () => {
-        localStorage.setItem("selectedProduct", JSON.stringify(item));
-        window.location.href = "product.html";
-      };
-      div.innerHTML = `
-        <img src="${item.image || 'https://via.placeholder.com/300x200'}" alt="${item.title}">
-        <div class="info">
-          <h3>${item.title}</h3>
-          <p>₹${item.price}</p>
-        </div>
-      `;
-      container.appendChild(div);
-    });
+  function displayProducts(products) {
+    container.innerHTML = "";
+    if (products.length === 0) {
+      container.innerHTML = "<p>No products found.</p>";
+    } else {
+      products.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.onclick = () => {
+          localStorage.setItem("selectedProduct", JSON.stringify(item));
+          window.location.href = "product.html";
+        };
+        div.innerHTML = `
+          <img src="${item.image || 'https://via.placeholder.com/300x200'}" alt="${item.title}">
+          <div class="info">
+            <h3>${item.title}</h3>
+            <p>₹${item.price}</p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
   }
+
+  function filterProducts() {
+    const keyword = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = allProducts.filter(product =>
+      product.title.toLowerCase().includes(keyword)
+    );
+    displayProducts(filtered);
+  }
+
+  // Initial load
+  displayProducts(allProducts);
 </script>
 
 </body>
