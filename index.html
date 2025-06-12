@@ -1,107 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E-store</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 10px;
+      box-sizing: border-box;
     }
     h1 {
       text-align: center;
-      font-style: italic;
-      margin-top: 20px;
-    }
-    #ad-section {
-      background-color: #ffe;
-      padding: 10px;
-      text-align: center;
+      font-family: 'Georgia', serif;
       font-weight: bold;
     }
-    #search {
-      display: block;
-      margin: 10px auto;
-      width: 90%;
-      height: 40px;
-      font-size: 18px;
-      padding: 5px;
+    #adBanner img {
+      width: 100%;
+      max-height: 100px;
+      object-fit: cover;
+      margin-bottom: 10px;
     }
-    .product-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 10px;
+    #searchBox {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border: 2px solid black;
     }
     .product {
       border: 2px solid black;
-      text-align: center;
       padding: 10px;
+      text-align: center;
+      margin: 5px;
     }
     .product img {
       width: 100%;
-      height: auto;
+      height: 100px;
+      object-fit: contain;
     }
-    .price {
-      margin-top: 5px;
-      font-weight: bold;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
     }
-    .bottom-nav {
+    .navbar {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
       display: flex;
       justify-content: space-around;
-      background-color: #e0f0ff;
+      background-color: white;
+      border-top: 2px solid black;
       padding: 10px 0;
-      border-top: 2px solid #ccc;
     }
-    .bottom-nav button {
+    .navbar button {
       background: none;
       border: none;
-      font-size: 28px;
-      cursor: pointer;
+      font-size: 24px;
     }
   </style>
 </head>
 <body>
-
-  <h1>E-store</h1>
-
-  <div id="ad-section">
-    🔥 Special Offer: Flat 20% OFF on Electronics! 🔥
-  </div>
-
-  <input type="text" id="search" placeholder="search here">
-
-  <div class="product-grid" id="productGrid">
-    <!-- Products will be shown here -->
-  </div>
-
-  <div class="bottom-nav">
-    <button onclick="location.href='profile.html'">👦</button>
-    <button onclick="location.href='index.html'">🏠</button>
+  <h1><i>E-store</i></h1>  <div id="adBanner"></div>  <input type="text" id="searchBox" placeholder="search here" oninput="filterProducts()">  <div class="grid" id="productGrid"></div>  <div class="navbar">
+    <button onclick="location.href='seller.html'">🙋</button>
+    <button onclick="location.href='homepage.html'">🏡</button>
     <button onclick="location.href='cart.html'">🛒</button>
-  </div>
+  </div>  <script>
+    function loadAds() {
+      const ads = JSON.parse(localStorage.getItem('ads')) || [];
+      const adDiv = document.getElementById('adBanner');
+      adDiv.innerHTML = '';
+      ads.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        adDiv.appendChild(img);
+      });
+    }
 
-  <script>
-    // Sample data from localStorage
-    const products = JSON.parse(localStorage.getItem("products")) || [];
+    function loadProducts() {
+      const products = JSON.parse(localStorage.getItem('products')) || [];
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '';
+      products.forEach((p, index) => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `
+          <img src="${p.image}" alt="Product image">
+          <p>৳ ${p.price}</p>
+        `;
+        grid.appendChild(div);
+      });
+    }
 
-    const grid = document.getElementById("productGrid");
+    function filterProducts() {
+      const query = document.getElementById('searchBox').value.toLowerCase();
+      const products = document.querySelectorAll('.product');
+      products.forEach(p => {
+        const text = p.innerText.toLowerCase();
+        p.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
 
-    products.forEach(prod => {
-      const div = document.createElement("div");
-      div.className = "product";
-      div.innerHTML = `
-        <img src="${prod.image}" alt="product image">
-        <div class="price">৳${prod.price}</div>
-      `;
-      grid.appendChild(div);
-    });
-  </script>
-
-</body>
+    loadAds();
+    loadProducts();
+  </script></body>
 </html>
