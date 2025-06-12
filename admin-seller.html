@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Seller List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .btn {
+      padding: 5px 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-approve {
+      background-color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <h2>Seller Management</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Seller ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="sellerList">
+      <!-- Example row -->
+      <tr>
+        <td>SELL1001</td>
+        <td>Ravi Kumar</td>
+        <td>ravi@example.com</td>
+        <td>9876543210</td>
+        <td>Pending</td>
+        <td>
+          <button class="btn btn-approve" onclick="approveSeller(this)">Approve</button>
+          <button class="btn" onclick="removeSeller(this)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>  <script>
+    function approveSeller(btn) {
+      const row = btn.parentElement.parentElement;
+      row.cells[4].innerText = "Approved";
+      btn.disabled = true;
+    }
+
+    function removeSeller(btn) {
+      if (confirm("Are you sure you want to remove this seller?")) {
+        btn.parentElement.parentElement.remove();
+      }
+    }
+  </script></body>
+</html>
