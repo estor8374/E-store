@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - E-store</title>
+  <style>
+    body { font-family: Arial; margin: 0; padding: 0; background: #f9f9f9; }
+    header { background: #333; color: white; padding: 10px 20px; text-align: center; }
+    h1 { margin: 0; }
+    nav { background: #444; display: flex; flex-wrap: wrap; padding: 10px; }
+    nav button {
+      flex: 1 1 30%;
+      margin: 5px;
+      padding: 15px;
+      background: white;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    nav button:hover { background: #eee; }
+    footer {
+      text-align: center;
+      background: #ddd;
+      padding: 10px;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Admin Dashboard</h1>
+</header>
+
+<nav>
+  <button onclick="location.href='admin-ads.html'">📢 Manage Ads</button>
+  <button onclick="location.href='admin-products.html'">📦 View All Products</button>
+  <button onclick="location.href='admin-sellers.html'">🧑‍💼 Seller Accounts</button>
+  <button onclick="location.href='admin-orders.html'">🧾 Manage Orders</button>
+  <button onclick="location.href='admin-payments.html'">💰 Payment History</button>
+  <button onclick="location.href='admin-customers.html'">👥 Customer Info</button>
+  <button onclick="location.href='admin-feedback.html'">✉️ Feedback/Complaints</button>
+  <button onclick="location.href='admin-settings.html'">⚙️ Site Settings</button>
+  <button onclick="location.href='admin-login.html'">🔒 Logout</button>
+</nav>
+
+<footer>
+  &copy; 2025 E-store Admin Panel
+</footer>
+
+</body>
+</html>
