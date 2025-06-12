@@ -1,109 +1,105 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-store</title>
+  <title>E-store - Homepage</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       margin: 0;
-      padding: 10px;
-      box-sizing: border-box;
+      padding: 0;
     }
-    h1 {
+    header {
       text-align: center;
-      font-family: 'Georgia', serif;
+      font-size: 2rem;
       font-weight: bold;
-    }
-    #adBanner img {
-      width: 100%;
-      max-height: 100px;
-      object-fit: cover;
-      margin-bottom: 10px;
+      padding: 10px;
     }
     #searchBox {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      margin-bottom: 10px;
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 10px;
+      font-size: 1rem;
       border: 2px solid black;
+    }
+    #adBanner {
+      margin: 10px;
+      text-align: center;
+    }
+    #products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 10px;
     }
     .product {
       border: 2px solid black;
       padding: 10px;
       text-align: center;
-      margin: 5px;
     }
     .product img {
       width: 100%;
       height: 100px;
-      object-fit: contain;
+      object-fit: cover;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-    .navbar {
+    .nav {
       position: fixed;
       bottom: 0;
-      left: 0;
       width: 100%;
       display: flex;
-      justify-content: space-around;
-      background-color: white;
       border-top: 2px solid black;
-      padding: 10px 0;
     }
-    .navbar button {
-      background: none;
-      border: none;
-      font-size: 24px;
+    .nav a {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      font-size: 1.5rem;
+      text-decoration: none;
+      border-right: 1px solid black;
+    }
+    .nav a:last-child {
+      border-right: none;
     }
   </style>
 </head>
 <body>
-  <h1><i>E-store</i></h1>  <div id="adBanner"></div>  <input type="text" id="searchBox" placeholder="search here" oninput="filterProducts()">  <div class="grid" id="productGrid"></div>  <div class="navbar">
-    <button onclick="location.href='seller.html'">🙋</button>
-    <button onclick="location.href='homepage.html'">🏡</button>
-    <button onclick="location.href='cart.html'">🛒</button>
-  </div>  <script>
-    function loadAds() {
-      const ads = JSON.parse(localStorage.getItem('ads')) || [];
-      const adDiv = document.getElementById('adBanner');
-      adDiv.innerHTML = '';
-      ads.forEach(url => {
-        const img = document.createElement('img');
-        img.src = url;
-        adDiv.appendChild(img);
-      });
-    }
 
-    function loadProducts() {
-      const products = JSON.parse(localStorage.getItem('products')) || [];
-      const grid = document.getElementById('productGrid');
-      grid.innerHTML = '';
-      products.forEach((p, index) => {
-        const div = document.createElement('div');
-        div.className = 'product';
-        div.innerHTML = `
-          <img src="${p.image}" alt="Product image">
-          <p>৳ ${p.price}</p>
-        `;
-        grid.appendChild(div);
-      });
-    }
+  <header>E-store</header>
 
-    function filterProducts() {
-      const query = document.getElementById('searchBox').value.toLowerCase();
-      const products = document.querySelectorAll('.product');
-      products.forEach(p => {
-        const text = p.innerText.toLowerCase();
-        p.style.display = text.includes(query) ? '' : 'none';
-      });
-    }
+  <input type="text" id="searchBox" placeholder="search here">
 
-    loadAds();
-    loadProducts();
-  </script></body>
+  <div id="adBanner"></div>
+
+  <div id="products"></div>
+
+  <div class="nav">
+    <a href="seller.html">🧑‍💻</a>
+    <a href="index.html">🏠</a>
+    <a href="cart.html">🛒</a>
+  </div>
+
+  <script>
+    const container = document.getElementById("products");
+    const adBanner = document.getElementById("adBanner");
+
+    // Get products from localStorage
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    // Load Ad
+    adBanner.innerHTML = localStorage.getItem("ads") || "";
+
+    // Display products
+    container.innerHTML = "";
+    products.forEach(product => {
+      container.innerHTML += `
+        <div class="product">
+          <img src="${product.image}" alt="product image">
+          <p>${product.price}</p>
+        </div>
+      `;
+    });
+  </script>
+
+</body>
 </html>
