@@ -1,89 +1,149 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>e-Store - Home</title>
+  <title>e-Store Home</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; }
-    header { background: #4CAF50; color: white; padding: 15px; text-align: center; font-size: 24px; }
-    #searchBar {
-      width: 90%; max-width: 500px; margin: 20px auto;
-      display: block; padding: 10px; border-radius: 5px; border: 1px solid #ccc;
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
     }
-    .product-list { padding: 10px; }
+
+    header {
+      background-color: #2196F3;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .search-box {
+      padding: 10px;
+      text-align: center;
+    }
+
+    .search-box input {
+      width: 90%;
+      max-width: 400px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+
     .product {
-      background: white; padding: 10px; margin: 10px 0;
-      border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .product:hover {
+      transform: scale(1.03);
+    }
+
+    .product img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .product h4 {
+      margin: 8px 0 4px;
+      font-size: 16px;
+    }
+
+    .product p {
+      margin: 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #ccc;
+    }
+
+    footer button {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      background: none;
       cursor: pointer;
     }
-    footer {
-      position: fixed; bottom: 0; width: 100%; background: #ddd;
-      display: flex; justify-content: space-around; padding: 10px 0;
-    }
-    footer button {
-      background: none; border: none; font-size: 16px;
+
+    footer button:hover {
+      background: #f0f0f0;
     }
   </style>
 </head>
 <body>
 
-  <header>e-Store</header>
-  <input type="text" id="searchBar" placeholder="Search products..." onkeyup="searchProducts()">
+<header>
+  <h1>e-Store</h1>
+</header>
 
-  <div class="product-list" id="productList"></div>
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="Search products..." oninput="showProducts()">
+</div>
 
-  <footer>
-    <button onclick="location.href='index.html'">🏠 Home</button>
-    <button onclick="location.href='cart.html'">🛒 Cart</button>
-    <button onclick="location.href='profile.html'">👤 Profile</button>
-  </footer>
+<div class="products" id="productList"></div>
 
-  <script>
-    let all = [];
-    const productList = document.getElementById("productList");
+<footer>
+  <button onclick="location.href='index.html'">🏠 Home</button>
+  <button onclick="location.href='cart.html'">🛒 Cart</button>
+  <button onclick="location.href='profile.html'">👤 Profile</button>
+</footer>
 
-    function loadProducts() {
-      const keys = Object.keys(localStorage);
-      all = [];
-      keys.forEach(k => {
-        if (k.startsWith("products_")) {
-          const list = JSON.parse(localStorage.getItem(k)) || [];
-          all = all.concat(list);
-        }
-      });
-      showProducts(all);
-    }
+<script>
+  const productListDiv = document.getElementById("productList");
 
-    function showProducts(products) {
-      productList.innerHTML = '';
-      if (products.length === 0) {
-        productList.innerHTML = "<p>No products found.</p>";
-        return;
-      }
-      products.forEach(product => {
+  function showProducts() {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    const products = JSON.parse(localStorage.getItem("allProducts")) || [];
+    productListDiv.innerHTML = "";
+
+    const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+
+    if (filtered.length === 0) {
+      productListDiv.innerHTML = "<p>No products found.</p>";
+    } else {
+      filtered.forEach((p, i) => {
         const div = document.createElement("div");
         div.className = "product";
         div.onclick = () => {
-          localStorage.setItem("selectedProduct", JSON.stringify(product));
-          location.href = "product.html";
+          localStorage.setItem("selectedProductIndex", i);
+          window.location.href = "product.html";
         };
         div.innerHTML = `
-          <h3>${product.name}</h3>
-          <p>₹${product.price}</p>
+          ${p.image ? `<img src="${p.image}" alt="Product Image">` : `<img src="placeholder.jpg" alt="No Image">`}
+          <h4>${p.name}</h4>
+          <p>₹${p.price}</p>
         `;
-        productList.appendChild(div);
+        productListDiv.appendChild(div);
       });
     }
+  }
 
-    function searchProducts() {
-      const keyword = document.getElementById("searchBar").value.toLowerCase();
-      const filtered = all.filter(p => p.name.toLowerCase().includes(keyword));
-      showProducts(filtered);
-    }
-
-    loadProducts();
-  </script>
+  showProducts();
+</script>
 
 </body>
 </html>
