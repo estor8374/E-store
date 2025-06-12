@@ -1,114 +1,42 @@
-<!DOCTYPE html><html lang="en">
+<!-- admin-products.html --><!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Products - eStore</title>
+  <title>Admin - Products</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      padding: 20px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    body { font-family: Arial, sans-serif; background: #f8f8f8; padding: 20px; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    .product-list { max-width: 800px; margin: auto; }
+    .product {
       background: white;
-      border-radius: 10px;
-      overflow: hidden;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #007bff;
-      color: white;
-    }
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-    .action-btn {
-      padding: 6px 12px;
-      background: #dc3545;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .action-btn.edit {
-      background: #28a745;
-      margin-right: 5px;
-    }
+    .product h3, .product p { margin: 5px 0; }
+    .orders { color: green; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h2>All Products - Admin Panel</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Product Name</th>
-        <th>Seller</th>
-        <th>Price</th>
-        <th>Orders</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="productList">
-      <!-- Product rows will be populated by JS -->
-    </tbody>
-  </table>  <script>
-    const products = JSON.parse(localStorage.getItem("allProducts")) || [
-      {
-        id: "P001",
-        name: "Wireless Mouse",
-        seller: "techhub@example.com",
-        price: 499,
-        orders: 12,
-        status: "Active"
-      },
-      {
-        id: "P002",
-        name: "Bluetooth Headphones",
-        seller: "audiozone@example.com",
-        price: 1299,
-        orders: 8,
-        status: "Active"
-      }
-    ];
+  <h2>All Products</h2>
+  <div class="product-list" id="productList"></div>  <script>
+    const products = JSON.parse(localStorage.getItem("allProducts")) || [];
+    const list = document.getElementById("productList");
 
-    const table = document.getElementById("productList");
-
-    products.forEach(product => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${product.id}</td>
-        <td>${product.name}</td>
-        <td>${product.seller}</td>
-        <td>₹${product.price}</td>
-        <td>${product.orders}</td>
-        <td>${product.status}</td>
-        <td>
-          <button class="action-btn edit" onclick="editProduct('${product.id}')">Edit</button>
-          <button class="action-btn" onclick="removeProduct('${product.id}')">Remove</button>
-        </td>
-      `;
-      table.appendChild(tr);
-    });
-
-    function editProduct(id) {
-      alert("Edit functionality will be added soon for Product ID: " + id);
-    }
-
-    function removeProduct(id) {
-      alert("Product removed: " + id);
+    if (products.length === 0) {
+      list.innerHTML = '<p style="text-align:center">No products found.</p>';
+    } else {
+      products.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <h3>${product.name}</h3>
+          <p>Price: ₹${product.price}</p>
+          <p>${product.description}</p>
+          <p class="orders">Total Orders: ${product.orders}</p>
+        `;
+        list.appendChild(div);
+      });
     }
   </script></body>
 </html>
