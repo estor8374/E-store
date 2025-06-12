@@ -19,9 +19,6 @@
   </style>
 </head>
 <body>
-<footer>
-  <button onclick="location.href='sel-index.html'">🏠 Home</button>
-</footer>
   
   <div class="form-box">
     <h2>Add New Product</h2>
@@ -57,7 +54,7 @@
 
       if (!id || !name || !price || !desc) return alert("All fields required");
 
-      const key = `products_${id}`;
+      const key = `allproducts_${id}`;
       const product = {
         name,
         price,
@@ -77,6 +74,8 @@
       document.getElementById("imagePreview").style.display = "none";
     }
   </script>
-
+<footer>
+  <button onclick="location.href='sel-index.html'">🏠 Home</button>
+</footer>
 </body>
 </html>
