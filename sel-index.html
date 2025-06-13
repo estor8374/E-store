@@ -2,82 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Seller Products</title>
+  <title>Your Products</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding-bottom: 60px;
-      background: #f4f4f4;
-    }
-    h2 {
-      text-align: center;
-      padding: 10px;
-    }
-    .product-list {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      padding: 10px;
-    }
+    body { font-family: Arial; margin: 0; padding: 0; background: #f5f5f5; }
+    h2 { text-align: center; margin: 20px; }
     .product {
       background: white;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 10px auto;
+      padding: 15px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .product img {
       width: 100%;
-      height: 150px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 5px;
     }
-    .product h3 {
-      margin: 10px 0 5px;
-      font-size: 18px;
-    }
-    .product p {
-      margin: 0;
-      color: #555;
-    }
-    .buttons {
-      margin-top: 10px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .buttons button {
-      flex: 1;
-      margin: 0 5px;
-      padding: 8px;
+    .product h3 { margin: 10px 0 5px; }
+    .product p { margin: 5px 0; }
+    .actions button {
+      margin: 5px;
+      padding: 6px 10px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
     .edit { background-color: #007bff; color: white; }
     .delete { background-color: #dc3545; color: white; }
-    .nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background: white;
-      border-top: 1px solid #ccc;
-      padding: 10px 0;
-    }
-    .nav button {
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
-
-<h2>Your Products</h2>
-<div class="product-list" id="productList"></div>
-
+  <h2>Your Products</h2>
+  <div id="productList"></div>
 <div class="nav">
   <button onclick="location.href='index.html'">🏠 Home</button>
   <button onclick="location.href='seller.html'">➕ Add</button>
@@ -86,54 +45,74 @@
   <button onclick="location.href='sel-notic.html'">🔔notic</button>
 </div>
 
-<script>
-  const email = localStorage.getItem("sellerEmail");
-  if (!email) {
-    alert("No seller logged in.");
-  } else {
-    let sellerProducts = JSON.parse(localStorage.getItem("products_" + email)) || [];
-    const list = document.getElementById("productList");
+  <script>
+    const sellerEmail = localStorage.getItem("loggedInSeller");
+    const allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
+    const productList = document.getElementById("productList");
 
     function renderProducts() {
-      list.innerHTML = "";
-      if (sellerProducts.length === 0) {
-        list.innerHTML = "<p style='text-align:center;width:100%'>No products found.</p>";
+      productList.innerHTML = "";
+      const myProducts = allProducts.filter(p => p.email === sellerEmail);
+      
+      if (myProducts.length === 0) {
+        productList.innerHTML = "<p style='text-align:center'>No products added yet.</p>";
         return;
       }
 
-      sellerProducts.forEach((product, index) => {
+      myProducts.forEach((product, index) => {
         const div = document.createElement("div");
         div.className = "product";
         div.innerHTML = `
-          <img src="${product.image || ''}" alt="${product.name}">
+          <img src="${product.image}" alt="${product.name}">
           <h3>${product.name}</h3>
-          <p>₹${product.price}</p>
-          <div class="buttons">
+          <p>Price: ₹${product.price}</p>
+          <p>${product.description}</p>
+          <div class="actions">
             <button class="edit" onclick="editProduct(${index})">Edit</button>
             <button class="delete" onclick="deleteProduct(${index})">Delete</button>
           </div>
         `;
-        list.appendChild(div);
+        productList.appendChild(div);
       });
     }
 
     function deleteProduct(index) {
-      if (confirm("Are you sure you want to delete this product?")) {
-        sellerProducts.splice(index, 1);
-        localStorage.setItem("products_" + email, JSON.stringify(sellerProducts));
+      const myIndex = allProducts.findIndex(
+        (p, i) => p.email === sellerEmail && i === index
+      );
+      if (myIndex !== -1) {
+        allProducts.splice(myIndex, 1);
+        localStorage.setItem("allProducts", JSON.stringify(allProducts));
         renderProducts();
       }
     }
 
     function editProduct(index) {
-      localStorage.setItem("editProductIndex", index);
-      localStorage.setItem("editProductEmail", email);
-      location.href = "edit-product.html";
+      const product = allProducts.filter(p => p.email === sellerEmail)[index];
+      const newName = prompt("New product name", product.name);
+      const newPrice = prompt("New price", product.price);
+      const newDesc = prompt("New description", product.description);
+      
+      if (newName && newPrice && newDesc) {
+        const realIndex = allProducts.findIndex(
+          (p, i) => p.email === sellerEmail && p.name === product.name && i >= 0
+        );
+        if (realIndex !== -1) {
+          allProducts[realIndex].name = newName;
+          allProducts[realIndex].price = parseFloat(newPrice);
+          allProducts[realIndex].description = newDesc;
+          localStorage.setItem("allProducts", JSON.stringify(allProducts));
+          renderProducts();
+        }
+      }
     }
 
-    renderProducts();
-  }
-</script>
-
+    if (!sellerEmail) {
+      alert("Please login first!");
+      window.location.href = "sel-login.html";
+    } else {
+      renderProducts();
+    }
+  </script>
 </body>
 </html>
