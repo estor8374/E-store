@@ -131,7 +131,7 @@
 
     // Save products to localStorage
     function saveProducts() {
-      localStorage.setItem("allproducts", JSON.stringify(allProducts));
+      localStorage.setItem("allproducts", JSON.stringify(allProducts,loggedInSeller.email));
     }
 
     // Load seller's products
