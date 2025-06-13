@@ -1,81 +1,120 @@
-<!-- seller.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Seller Add Product</title>
+  <title>Seller Panel</title>
   <style>
-    body { font-family: Arial; background: #f9f9f9; padding: 20px; }
+    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
     .form-box {
-      background: white; padding: 20px; border-radius: 10px; max-width: 400px;
-      margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
     }
+    h2 { text-align: center; }
     input, textarea, button {
-      display: block; width: 100%; margin: 10px 0; padding: 10px;
-      border-radius: 5px; border: 1px solid #ccc;
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-    button { background: #28a745; color: white; border: none; cursor: pointer; }
-    img { max-width: 100%; margin-top: 10px; display: none; }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    img {
+      width: 100px;
+      margin-top: 10px;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  
-  <div class="form-box">
-    <h2>Add New Product</h2>
-    <input type="text" id="sellerId" placeholder="Your Seller ID (Email)">
-    <input type="text" id="productName" placeholder="Product Name">
-    <input type="number" id="productPrice" placeholder="Price">
-    <textarea id="productDesc" placeholder="Description"></textarea>
-    <input type="file" id="productImage" accept="image/*" onchange="previewImage()">
-    <img id="imagePreview" />
-    <button onclick="addProduct()">Add Product</button>
-  </div>
-<script>
-    let imageData = "";
 
-    function previewImage() {
-      const file = document.getElementById("productImage").files[0];
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        imageData = e.target.result;
-        document.getElementById("imagePreview").src = imageData;
-        document.getElementById("imagePreview").style.display = "block";
-      };
-      if (file) {
-        reader.readAsDataURL(file);
-      }
+<div class="form-box">
+  <h2>Add New Product</h2>
+  <input type="text" id="productName" placeholder="Product Name">
+  <input type="number" id="productPrice" placeholder="Price in ₹">
+  <textarea id="productDesc" placeholder="Description"></textarea>
+  <input type="file" id="productImage" accept="image/*" onchange="previewImage()">
+  <img id="imagePreview" />
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<script>
+  function previewImage() {
+    const file = document.getElementById("productImage").files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      document.getElementById("imagePreview").src = reader.result;
+      document.getElementById("imagePreview").style.display = "block";
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function addProduct() {
+    const email = localStorage.getItem("sellerEmail");
+    if (!email) {
+      alert("Seller not logged in.");
+      return;
     }
 
-    function addProduct() {
-      const id = document.getElementById("sellerId").value.trim();
-      const name = document.getElementById("productName").value.trim();
-      const price = parseFloat(document.getElementById("productPrice").value);
-      const desc = document.getElementById("productDesc").value.trim();
+    const name = document.getElementById("productName").value.trim();
+    const price = parseFloat(document.getElementById("productPrice").value);
+    const description = document.getElementById("productDesc").value.trim();
+    const imageFile = document.getElementById("productImage").files[0];
 
-      if (!id || !name || !price || !desc) return alert("All fields required");
+    if (!name || !price || !description) {
+      alert("Please fill all fields.");
+      return;
+    }
 
-      const key = `allproducts_${id}`;
-      const product = {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageData = reader.result;
+
+      const newProduct = {
         name,
         price,
-        description: desc,
-        sellerId: id,
+        description,
         image: imageData,
+        seller: email,
         orders: 0
       };
-      const existing = JSON.parse(localStorage.getItem(kye"allproducts")) || [];
 
-      existing.push(product);
-      localStorage.setItem(key, JSON.stringify(existing));
+      // Save to allProducts
+      const allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
+      allProducts.push(newProduct);
+      localStorage.setItem("allProducts", JSON.stringify(allProducts));
 
-      alert("Product added!");
-      document.querySelectorAll("input, textarea").forEach(el => el.value = "");
-      imageData = "";
+      // Save to seller-specific key
+      const sellerKey = "products_" + email;
+      const sellerProducts = JSON.parse(localStorage.getItem(sellerKey)) || [];
+      sellerProducts.push(newProduct);
+      localStorage.setItem(sellerKey, JSON.stringify(sellerProducts));
+
+      alert("Product added successfully!");
+      document.getElementById("productName").value = "";
+      document.getElementById("productPrice").value = "";
+      document.getElementById("productDesc").value = "";
+      document.getElementById("productImage").value = "";
       document.getElementById("imagePreview").style.display = "none";
+    };
+
+    if (imageFile) {
+      reader.readAsDataURL(imageFile);
+    } else {
+      reader.onloadend(); // Fallback if no image
     }
-  </script>
-<footer>
-  <button onclick="location.href='sel-index.html'">🏠 Home</button>
-</footer>
+  }
+</script>
+
 </body>
 </html>
