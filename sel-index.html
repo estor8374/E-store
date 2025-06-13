@@ -2,117 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Your Products</title>
+  <title>Seller Dashboard</title>
   <style>
-    body { font-family: Arial; margin: 0; padding: 0; background: #f5f5f5; }
-    h2 { text-align: center; margin: 20px; }
-    .product {
-      background: white;
-      margin: 10px auto;
-      padding: 15px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
-    .product img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 5px;
+    .top-bar span {
+      font-weight: bold;
+      color: #333;
     }
-    .product h3 { margin: 10px 0 5px; }
-    .product p { margin: 5px 0; }
-    .actions button {
-      margin: 5px;
-      padding: 6px 10px;
+    button.logout {
+      background-color: #dc3545;
+      color: white;
       border: none;
+      padding: 8px 12px;
       border-radius: 5px;
       cursor: pointer;
     }
-    .edit { background-color: #007bff; color: white; }
-    .delete { background-color: #dc3545; color: white; }
+    .product-box {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background: white;
+      border-top: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .bottom-nav button {
+      border: none;
+      background: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+
+  <div class="top-bar">
+    <span id="sellerEmail">Loading...</span>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
   <h2>Your Products</h2>
   <div id="productList"></div>
-<div class="nav">
+
+  <div class="nav">
   <button onclick="location.href='index.html'">🏠 Home</button>
   <button onclick="location.href='seller.html'">➕ Add</button>
   <button onclick="alert('Profile Coming Soon')">👤 Profile</button>
     <button onclick="location.href='sel-oders.html'">📦oders</button>
   <button onclick="location.href='sel-notic.html'">🔔notic</button>
-</div>
+  </div>
 
   <script>
-    const sellerEmail = localStorage.getItem("loggedInSeller");
-    const allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
-    const productList = document.getElementById("productList");
+    const email = localStorage.getItem("loggedInSeller");
 
-    function renderProducts() {
-      productList.innerHTML = "";
-      const myProducts = allProducts.filter(p => p.email === sellerEmail);
-      
-      if (myProducts.length === 0) {
-        productList.innerHTML = "<p style='text-align:center'>No products added yet.</p>";
-        return;
-      }
-
-      myProducts.forEach((product, index) => {
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-          <img src="${product.image}" alt="${product.name}">
-          <h3>${product.name}</h3>
-          <p>Price: ₹${product.price}</p>
-          <p>${product.description}</p>
-          <div class="actions">
-            <button class="edit" onclick="editProduct(${index})">Edit</button>
-            <button class="delete" onclick="deleteProduct(${index})">Delete</button>
-          </div>
-        `;
-        productList.appendChild(div);
-      });
-    }
-
-    function deleteProduct(index) {
-      const myIndex = allProducts.findIndex(
-        (p, i) => p.email === sellerEmail && i === index
-      );
-      if (myIndex !== -1) {
-        allProducts.splice(myIndex, 1);
-        localStorage.setItem("allProducts", JSON.stringify(allProducts));
-        renderProducts();
-      }
-    }
-
-    function editProduct(index) {
-      const product = allProducts.filter(p => p.email === sellerEmail)[index];
-      const newName = prompt("New product name", product.name);
-      const newPrice = prompt("New price", product.price);
-      const newDesc = prompt("New description", product.description);
-      
-      if (newName && newPrice && newDesc) {
-        const realIndex = allProducts.findIndex(
-          (p, i) => p.email === sellerEmail && p.name === product.name && i >= 0
-        );
-        if (realIndex !== -1) {
-          allProducts[realIndex].name = newName;
-          allProducts[realIndex].price = parseFloat(newPrice);
-          allProducts[realIndex].description = newDesc;
-          localStorage.setItem("allProducts", JSON.stringify(allProducts));
-          renderProducts();
-        }
-      }
-    }
-
-    if (!sellerEmail) {
-      alert("Please login first!");
+    if (!email) {
+      alert("Please login first.");
       window.location.href = "sel-login.html";
     } else {
-      renderProducts();
+      document.getElementById("sellerEmail").textContent = email;
+
+      // Load seller's products
+      const allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
+      const sellerProducts = allProducts.filter(p => p.seller === email);
+      const list = document.getElementById("productList");
+
+      if (sellerProducts.length === 0) {
+        list.innerHTML = "<p>No products found.</p>";
+      } else {
+        sellerProducts.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "product-box";
+          div.innerHTML = `
+            <h3>${p.name}</h3>
+            <p>₹${p.price}</p>
+            <p>${p.description}</p>
+            ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100px;">` : ''}
+          `;
+          list.appendChild(div);
+        });
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedInSeller");
+      window.location.href = "sel-login.html";
     }
   </script>
+
 </body>
 </html>
