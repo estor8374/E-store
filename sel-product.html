@@ -1,76 +1,121 @@
-<!-- sel-product.html with Firebase --><!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Seller - Add Product</title>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";const firebaseConfig = {
-  apiKey: "AIzaSyDeYs3lVo_lN768GyaOhYfnAyObqziGXxk",
-  authDomain: "estore-b34ae.firebaseapp.com",
-  projectId: "estore-b34ae",
-  storageBucket: "estore-b34ae.appspot.com",
-  messagingSenderId: "321800770216",
-  appId: "1:321800770216:web:7b9782362457b025d6e89d",
-  measurementId: "G-2QZ4HV33PW"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-
-window.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById("productForm");
-  const sellerEmail = localStorage.getItem("loggedInSeller");
-
-  if (!sellerEmail) {
-    alert("Please log in.");
-    location.href = "sel-login.html";
-    return;
-  }
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = document.getElementById("productName").value;
-    const price = parseFloat(document.getElementById("productPrice").value);
-    const description = document.getElementById("productDescription").value;
-    const file = document.getElementById("productImage").files[0];
-
-    if (!file) return alert("Select an image");
-
-    try {
-      const imageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-      await uploadBytes(imageRef, file);
-      const imageUrl = await getDownloadURL(imageRef);
-
-      await addDoc(collection(db, "products"), {
-        name,
-        price,
-        description,
-        image: imageUrl,
-        seller: sellerEmail,
-        createdAt: new Date().toISOString()
-      });
-
-      alert("Product added successfully");
-      form.reset();
-    } catch (err) {
-      console.error("Error:", err);
-      alert("Failed to add product");
+  <meta charset="UTF-8" />
+  <title>Seller Products</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+    .form-box, .product-box {
+      background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-  });
-});
-
-  </script>
+    img { width: 100px; display: block; margin: 10px 0; }
+    input, textarea, button {
+      width: 100%; margin: 10px 0; padding: 10px; border-radius: 5px; border: 1px solid #ccc;
+    }
+    button { background: #28a745; color: white; border: none; cursor: pointer; }
+  </style>
 </head>
 <body>
-  <h2>Add New Product</h2>
+
+<div class="form-box">
+  <h2>Add Product</h2>
   <form id="productForm">
-    <input type="text" id="productName" placeholder="Product Name" required><br>
-    <input type="number" id="productPrice" placeholder="Price in ₹" required><br>
-    <textarea id="productDescription" placeholder="Description" required></textarea><br>
-    <input type="file" id="productImage" accept="image/*" required><br>
+    <input type="text" id="name" placeholder="Product Name" required />
+    <input type="number" id="price" placeholder="Price" required />
+    <textarea id="description" placeholder="Description"></textarea>
+    <input type="file" id="image" accept="image/*" required />
     <button type="submit">Add Product</button>
   </form>
+</div>
+
+<div class="product-box">
+  <h2>Your Products</h2>
+  <div id="productList">Loading...</div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDeYs3lVo_lN768GyaOhYfnAyObqziGXxk",
+    authDomain: "estore-b34ae.firebaseapp.com",
+    projectId: "estore-b34ae",
+    storageBucket: "estore-b34ae.appspot.com",
+    messagingSenderId: "321800770216",
+    appId: "1:321800770216:web:7b9782362457b025d6e89d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const email = localStorage.getItem("loggedInSeller");
+
+  const productForm = document.getElementById("productForm");
+  const productList = document.getElementById("productList");
+
+  productForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const price = parseFloat(document.getElementById("price").value);
+    const description = document.getElementById("description").value;
+    const imageFile = document.getElementById("image").files[0];
+
+    if (!imageFile) {
+      alert("Please select an image.");
+      return;
+    }
+
+    const imageRef = ref(storage, `products/${Date.now()}-${imageFile.name}`);
+    await uploadBytes(imageRef, imageFile);
+    const imageURL = await getDownloadURL(imageRef);
+
+    await addDoc(collection(db, "products"), {
+      name,
+      price,
+      description,
+      image: imageURL,
+      seller: email,
+      createdAt: new Date()
+    });
+
+    alert("Product added!");
+    productForm.reset();
+    loadProducts();
+  });
+
+  async function loadProducts() {
+    productList.innerHTML = "";
+    const q = query(collection(db, "products"), where("seller", "==", email));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      productList.innerHTML = "<p>No products found.</p>";
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      const p = doc.data();
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <h3>${p.name}</h3>
+        <p>₹${p.price}</p>
+        <p>${p.description}</p>
+        <img src="${p.image}" alt="${p.name}" />
+      `;
+      productList.appendChild(div);
+    });
+  }
+
+  if (email) loadProducts();
+  else {
+    alert("Please login");
+    window.location.href = "sel-login.html";
+  }
+</script>
 </body>
 </html>
