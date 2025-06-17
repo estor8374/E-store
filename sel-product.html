@@ -1,4 +1,4 @@
-<!-- seller.html --><!DOCTYPE html><html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Seller Dashboard</title>
@@ -28,81 +28,92 @@
       <input type="file" id="productImage" accept="image/*" required>
       <button type="submit">Add Product</button>
     </form>
-  </div>  <div class="form-box">
+  </div>
+  <div class="form-box">
     <h2>Your Products</h2>
     <div id="productList"></div>
-  </div>  <script>
+  </div>  <!-- Firebase SDKs -->  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeYs3lVo_lN768GyaOhYfnAyObqziGXxk",
+      authDomain: "estore-b34ae.firebaseapp.com",
+      projectId: "estore-b34ae",
+      storageBucket: "estore-b34ae.firebasestorage.app",
+      messagingSenderId: "321800770216",
+      appId: "1:321800770216:web:7b9782362457b025d6e89d",
+      measurementId: "G-2QZ4HV33PW",
+      databaseURL: "https://estore-b34ae-default-rtdb.firebaseio.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const sellerEmail = localStorage.getItem("loggedInSeller");
     if (!sellerEmail) window.location.href = "sel-login.html";
 
-    let allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
-
-    function saveProducts() {
-      localStorage.setItem("allProducts", JSON.stringify(allProducts));
+    function saveProductToFirebase(product) {
+      const productRef = db.ref("products").push();
+      productRef.set(product, () => {
+        loadSellerProducts();
+      });
     }
 
     function loadSellerProducts() {
       const container = document.getElementById("productList");
       container.innerHTML = "";
-      const sellerProducts = allProducts.filter(p => p.seller === sellerEmail);
 
-      if (sellerProducts.length === 0) {
-        container.innerHTML = "<p>No products found. Add your first product above.</p>";
-        return;
-      }
+      db.ref("products").orderByChild("seller").equalTo(sellerEmail).once("value", snapshot => {
+        const products = snapshot.val();
+        if (!products) {
+          container.innerHTML = "<p>No products found. Add your first product above.</p>";
+          return;
+        }
 
-      sellerProducts.forEach((product, index) => {
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-          <img src="${product.image}" alt="${product.name}" />
-          <h3>${product.name}</h3>
-          <p><strong>Price:</strong> ₹${product.price.toFixed(2)}</p>
-          ${product.description ? `<p><strong>Description:</strong> ${product.description}</p>` : ''}
-          <div class="product-actions">
-            <button onclick="editProduct(${index})">Edit</button>
-            <button onclick="deleteProduct(${index})">Delete</button>
-          </div>
-        `;
-        container.appendChild(div);
+        Object.entries(products).forEach(([id, product]) => {
+          const div = document.createElement("div");
+          div.className = "product";
+          div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" />
+            <h3>${product.name}</h3>
+            <p><strong>Price:</strong> ₹${product.price.toFixed(2)}</p>
+            <p><strong>Description:</strong> ${product.description}</p>
+            <div class="product-actions">
+              <button onclick="editProduct('${id}')">Edit</button>
+              <button onclick="deleteProduct('${id}')">Delete</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
       });
     }
 
-    function deleteProduct(index) {
+    function deleteProduct(id) {
       if (confirm("Are you sure you want to delete this product?")) {
-        const sellerProducts = allProducts.filter(p => p.seller === sellerEmail);
-        const productId = sellerProducts[index].id;
-        allProducts = allProducts.filter(p => p.id !== productId);
-        saveProducts();
-        loadSellerProducts();
+        db.ref("products/" + id).remove(() => {
+          loadSellerProducts();
+        });
       }
     }
 
-    function editProduct(index) {
-      const sellerProducts = allProducts.filter(p => p.seller === sellerEmail);
-      const product = sellerProducts[index];
+    function editProduct(id) {
+      db.ref("products/" + id).once("value", snapshot => {
+        const product = snapshot.val();
+        const newName = prompt("Product name:", product.name);
+        if (newName === null) return;
+        const newPrice = prompt("Product price:", product.price);
+        if (newPrice === null) return;
+        const newDesc = prompt("Product description:", product.description || "");
 
-      const newName = prompt("Product name:", product.name);
-      if (newName === null) return;
+        const updatedProduct = {
+          ...product,
+          name: newName,
+          price: parseFloat(newPrice),
+          description: newDesc
+        };
 
-      const newPrice = prompt("Product price:", product.price);
-      if (newPrice === null) return;
-
-      const newDesc = prompt("Product description:", product.description || "");
-
-      const updatedProduct = {
-        ...product,
-        name: newName,
-        price: parseFloat(newPrice),
-        description: newDesc
-      };
-
-      const productIndex = allProducts.findIndex(p => p.id === product.id);
-      if (productIndex !== -1) {
-        allProducts[productIndex] = updatedProduct;
-        saveProducts();
-        loadSellerProducts();
-      }
+        db.ref("products/" + id).set(updatedProduct, () => {
+          loadSellerProducts();
+        });
+      });
     }
 
     document.getElementById("productForm").addEventListener("submit", function(e) {
@@ -115,31 +126,24 @@
         alert("Please select an image");
         return;
       }
+
       const reader = new FileReader();
-      reader.onloadend = function() {
+      reader.onloadend = function () {
         const image = reader.result;
-        const product = { 
-          id: Date.now().toString(),
-          name, 
+        const product = {
+          name,
           price,
           description,
-          image, 
+          image,
           seller: sellerEmail,
           createdAt: new Date().toISOString()
         };
 
-        allProducts.push(product);
-        saveProducts();
-        loadSellerProducts();
+        saveProductToFirebase(product);
         document.getElementById("productForm").reset();
       };
       reader.readAsDataURL(file);
     });
-
-    function logout() {
-      localStorage.removeItem("loggedInSeller");
-      window.location.href = "sel-login.html";
-    }
 
     loadSellerProducts();
   </script></body>
