@@ -2,106 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Seller Signup - eStore</title>
+  <title>Seller Signup</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f1f1f1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: Arial;
+      background: #f4f4f4;
+      padding: 20px;
     }
-
     .signup-box {
       background: white;
+      max-width: 400px;
+      margin: auto;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 350px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    .signup-box h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-
-    .signup-box input {
+    input {
+      display: block;
       width: 100%;
+      margin: 10px 0;
       padding: 10px;
-      margin: 8px 0;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 6px;
     }
-
-    .signup-box button {
-      width: 100%;
+    button {
       background-color: #28a745;
       color: white;
       border: none;
-      padding: 12px;
-      margin-top: 10px;
-      font-size: 16px;
-      border-radius: 6px;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
       cursor: pointer;
     }
-
-    .signup-box p {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
-    .signup-box a {
-      color: #007bff;
-      text-decoration: none;
-    }
-
-    .signup-box a:hover {
-      text-decoration: underline;
-    }
+    h2 { text-align: center; }
   </style>
 </head>
 <body>
 
-  <div class="signup-box">
-    <h2>Seller Signup</h2>
-    <form id="signupForm">
-      <input type="text" id="name" placeholder="Full Name" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="submit">Create Account</button>
-    </form>
+<div class="signup-box">
+  <h2>Seller Signup</h2>
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button onclick="signup()">Create Account</button>
+</div>
 
-    <p>Already have an account? <a href="sel-login.html">Login here</a></p>
-  </div>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-  <script>
-    document.getElementById("signupForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+  const firebaseConfig = {
+    apiKey: "AIzaSyDeYs3lVo_lN768GyaOhYfnAyObqziGXxk",
+    authDomain: "estore-b34ae.firebaseapp.com",
+    projectId: "estore-b34ae",
+    storageBucket: "estore-b34ae.appspot.com",
+    messagingSenderId: "321800770216",
+    appId: "1:321800770216:web:7b9782362457b025d6e89d"
+  };
 
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-      const sellers = JSON.parse(localStorage.getItem("sellers") || "[]");
+  window.signup = function () {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-      const exists = sellers.find(seller => seller.email === email);
-      if (exists) {
-        alert("Seller already exists. Please login.");
+    if (!email || !password) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        alert("Account created successfully!");
         window.location.href = "sel-login.html";
-        return;
-      }
-
-      sellers.push({ name, email, password });
-      localStorage.setItem("sellers", JSON.stringify(sellers));
-
-      alert("✅ Account created successfully! Please login.");
-      window.location.href = "sel-login.html";
-    });
-  </script>
+      })
+      .catch((error) => {
+        alert("Error: " + error.message);
+      });
+  };
+</script>
 
 </body>
 </html>
