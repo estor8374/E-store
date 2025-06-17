@@ -4,60 +4,67 @@
   <meta charset="UTF-8">
   <title>Seller Login</title>
   <style>
-    body { font-family: Arial; background: #f9f9f9; padding: 20px; }
-    .box {
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin: 100px auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+    body { font-family: Arial, sans-serif; background: #f1f1f1; padding: 30px; }
+    .box { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
     input, button {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
       border-radius: 5px;
-      border: 1px solid #ccc;
     }
     button {
-      background-color: #007bff;
+      background: #28a745;
       color: white;
       border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
   <div class="box">
-    <h2>Seller Login</h2>
-    <input type="email" id="emailInput" placeholder="Enter your email" required>
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
     <button onclick="login()">Login</button>
+    <p id="message" style="color:red;"></p>
   </div>
-<div class="nav">
-  <button onclick="location.href='sel-singup.html'">signup</text/>
-</div>
-  <script>
-    function login() {
-      const email = document.getElementById("emailInput").value.trim();
 
-      if (!email) {
-        alert("Please enter your email.");
-        return;
-      }
+  <!-- Firebase Config -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-      // Save email to localStorage
-      localStorage.setItem("loggedInSeller", email);
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeYs3lVo_lN768GyaOhYfnAyObqziGXxk",
+      authDomain: "estore-b34ae.firebaseapp.com",
+      projectId: "estore-b34ae",
+      storageBucket: "estore-b34ae.appspot.com",
+      messagingSenderId: "321800770216",
+      appId: "1:321800770216:web:7b9782362457b025d6e89d"
+    };
 
-      // If admin email, go to admin panel
-      if (email === "estore8374@gmail.com") {
-        window.location.href = "admin-index.html";
-      } else {
-        // Otherwise go to seller dashboard
-        window.location.href = "sel-index.html";
-      }
-    }
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const msg = document.getElementById("message");
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+          localStorage.setItem("loggedInSeller", email);
+
+          if (email === "estore8374@gmail.com") {
+            window.location.href = "admin-index.html";
+          } else {
+            window.location.href = "sel-index.html";
+          }
+        })
+        .catch(error => {
+          msg.textContent = "Login failed: " + error.message;
+        });
+    };
   </script>
-
 </body>
 </html>
