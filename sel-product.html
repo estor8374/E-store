@@ -1,98 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- sel-product.html with Firebase --><!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Add Product</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
-    .form-box { background: white; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; }
-    h2 { text-align: center; }
-    input, textarea, button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button { background-color: #28a745; color: white; border: none; cursor: pointer; }
-  </style>
-</head>
-<body>
-
-  <div class="form-box">
-    <h2>Add New Product</h2>
-    <form id="productForm">
-      <input type="text" id="productName" placeholder="Product Name" required>
-      <input type="number" id="productPrice" placeholder="Price in ₹" required>
-      <textarea id="productDescription" placeholder="Description" required></textarea>
-      <input type="file" id="productImage" accept="image/*" required>
-      <button type="submit">Add Product</button>
-    </form>
-  </div>
-
-  <!-- Firebase SDK -->
+  <title>Seller - Add Product</title>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";const firebaseConfig = {
+  apiKey: "AIzaSyDeYs3lVo_lN768GyaOhYfnAyObqziGXxk",
+  authDomain: "estore-b34ae.firebaseapp.com",
+  projectId: "estore-b34ae",
+  storageBucket: "estore-b34ae.appspot.com",
+  messagingSenderId: "321800770216",
+  appId: "1:321800770216:web:7b9782362457b025d6e89d",
+  measurementId: "G-2QZ4HV33PW"
+};
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDeYs3lVo_lN768GyaOhYfnAyObqziGXxk",
-      authDomain: "estore-b34ae.firebaseapp.com",
-      projectId: "estore-b34ae",
-      storageBucket: "estore-b34ae.appspot.com",
-      messagingSenderId: "321800770216",
-      appId: "1:321800770216:web:7b9782362457b025d6e89d"
-    };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+window.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById("productForm");
+  const sellerEmail = localStorage.getItem("loggedInSeller");
 
-    const email = localStorage.getItem("loggedInSeller");
-    if (!email) {
-      alert("Please login first.");
-      window.location.href = "sel-login.html";
+  if (!sellerEmail) {
+    alert("Please log in.");
+    location.href = "sel-login.html";
+    return;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("productName").value;
+    const price = parseFloat(document.getElementById("productPrice").value);
+    const description = document.getElementById("productDescription").value;
+    const file = document.getElementById("productImage").files[0];
+
+    if (!file) return alert("Select an image");
+
+    try {
+      const imageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+      await uploadBytes(imageRef, file);
+      const imageUrl = await getDownloadURL(imageRef);
+
+      await addDoc(collection(db, "products"), {
+        name,
+        price,
+        description,
+        image: imageUrl,
+        seller: sellerEmail,
+        createdAt: new Date().toISOString()
+      });
+
+      alert("Product added successfully");
+      form.reset();
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Failed to add product");
     }
+  });
+});
 
-    document.getElementById("productForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const name = document.getElementById("productName").value.trim();
-      const price = parseFloat(document.getElementById("productPrice").value);
-      const description = document.getElementById("productDescription").value.trim();
-      const file = document.getElementById("productImage").files[0];
-
-      if (!file) {
-        alert("Please select an image.");
-        return;
-      }
-
-      try {
-        // Step 1: Upload image
-        const imageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-        await uploadBytes(imageRef, file);
-        const imageUrl = await getDownloadURL(imageRef);
-
-        // Step 2: Save product in Firestore
-        await addDoc(collection(db, "products"), {
-          name,
-          price,
-          description,
-          image: imageUrl,
-          seller: email,
-          createdAt: serverTimestamp()
-        });
-
-        alert("Product added successfully!");
-        document.getElementById("productForm").reset();
-      } catch (error) {
-        console.error("Error adding product:", error);
-        alert("Error adding product.");
-      }
-    });
   </script>
-
+</head>
+<body>
+  <h2>Add New Product</h2>
+  <form id="productForm">
+    <input type="text" id="productName" placeholder="Product Name" required><br>
+    <input type="number" id="productPrice" placeholder="Price in ₹" required><br>
+    <textarea id="productDescription" placeholder="Description" required></textarea><br>
+    <input type="file" id="productImage" accept="image/*" required><br>
+    <button type="submit">Add Product</button>
+  </form>
 </body>
 </html>
